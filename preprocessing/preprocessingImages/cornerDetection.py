@@ -14,10 +14,6 @@ cv.imshow('operatedImage',operatedImage)
 
 dst = cv.cornerHarris(operatedImage, 2, 5, 0.07)
 
-# make corners on image red
-img[dst > 0.01*dst.max()] = [0, 0, 255]
-cv.imshow('Image with Corners', img)
-# cv.waitKey(0)
 
 # finding the cordinates of corners
 bwCorners = np.zeros_like(operatedImage)        
@@ -43,9 +39,10 @@ for pt1 in coor_tuples:
     i += 1
 
 
+# show the final points on a copy of the image
 img2 = img.copy()
 for pt in coor_tuples:
     print(pt)
     cv.circle(img2, tuple(reversed(pt)), 3, (0, 0, 255), -1)
-cv.imshow('Image with 4 corners', img2) 
-cv.waitKey(0)
+cv.imshow('Image with main corners', img2) 
+# cv.waitKey(0)
