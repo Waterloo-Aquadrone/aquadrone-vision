@@ -172,6 +172,33 @@ STEP: TRAIN MODEL
 - Really need to figure out cloud computing
 - Build a dashboard for stats to find a good number of epochs
 '''
+# set the matplotlib backend so figures can be saved in the background
+import matplotlib
+matplotlib.use("Agg") # Plotting package for python
+import matplotlib.pyplot as plt
+import pickle
+
+# plot the training loss and accuracy
+N = np.arange(0, EPOCHS)
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(N, H.history["loss"], label="train_loss")
+plt.plot(N, H.history["val_loss"], label="val_loss")
+plt.plot(N, H.history["acc"], label="train_acc")
+plt.plot(N, H.history["val_acc"], label="val_acc")
+plt.title("Training Loss and Accuracy (Simple NN)")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss/Accuracy")
+plt.legend()
+plt.savefig(args["plot"])
+
+# save the model and label binarizer to disk
+print("[INFO] serializing network and label binarizer...")
+model.save(args["model"])
+f = open(args["label_bin"], "wb")
+f.write(pickle.dumps(lb))
+f.close()
+
 
 '''
 STEP: USING BOTTLENECK FEATURES OF PRE-TRAINED NETWORKS
