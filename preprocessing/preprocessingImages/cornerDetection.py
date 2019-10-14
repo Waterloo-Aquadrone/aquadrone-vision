@@ -9,16 +9,13 @@ def distance(pt1, pt2):
         return dist
 
 
-def get_contours(filename):
-    img = cv.imread(filename)
-
+def get_contours(img):
     # convert the input image into grayscale color space 
     grayImage = cv.cvtColor(img, cv.COLOR_BGR2GRAY) 
 
     # modify the data type setting to 32-bit floating point and get corners 
     operatedImage = np.float32(grayImage) 
     dst = cv.cornerHarris(operatedImage, 2, 5, 0.07)
-
 
     # finding the cordinates of corners
     bwCorners = np.zeros_like(operatedImage)        
@@ -52,5 +49,6 @@ def get_contours(filename):
     return coor_tuples
 
 
-# corners = get_contours("test.jpg")
-# print(corners)
+img = cv.imread("test.jpg")
+corners = get_contours(img)
+print(corners)
