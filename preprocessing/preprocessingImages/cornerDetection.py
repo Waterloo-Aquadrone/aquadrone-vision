@@ -10,12 +10,18 @@ def distance(pt1, pt2):
 
 
 def get_contours(img):
+    blockSize = 2     # the size of neighbourhood considered for corner detection
+    size = 5          # aperture parameter of Sobel derivative used
+    k = 0.07          # Harris detector free parameter in the equation
+    thresh = 10       # threshold for point filtering
+
+
     # convert the input image into grayscale color space 
     grayImage = cv.cvtColor(img, cv.COLOR_BGR2GRAY) 
 
     # modify the data type setting to 32-bit floating point and get corners 
     operatedImage = np.float32(grayImage) 
-    dst = cv.cornerHarris(operatedImage, 2, 5, 0.07)
+    dst = cv.cornerHarris(operatedImage, blockSize, size, k)
 
     # finding the cordinates of corners
     bwCorners = np.zeros_like(operatedImage)        
@@ -26,10 +32,9 @@ def get_contours(img):
     coor_tuples = [tuple(l) for l in coor_list]
 
 
-    # filter out the coordinates that are close 
+    # filter out the coordinates that are close, threshold defined above
     # (here I just took the first point, for improvement we can take center point)
     i = 1
-    thresh = 10
     for pt1 in coor_tuples:
         for pt2 in coor_tuples[i::1]:
             if (distance(pt1, pt2) < thresh):
@@ -49,6 +54,6 @@ def get_contours(img):
     return coor_tuples
 
 
-img = cv.imread("test.jpg")
-corners = get_contours(img)
-print(corners)
+# img = cv.imread("test.jpg")
+# corners = get_contours(img)
+# print(corners)
