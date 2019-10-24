@@ -10,35 +10,49 @@
 
 import cv2
 import os
-import argparse
-
+import argparse 
 from PIL import Image
 
-# Construct the argument parser
-ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video", required=True,
-    help="path to the video file")
-ap.add_argument("-d", "--directory", required=True,
-    help="path to the directory to store the frames. Will create a new directory \
-    if needed")
-ap.add_argument("-f", "--file", required=True,
-    help="path to the text file containing timestamps for objects in video")
-ap.add_argument("-c", "--compress", action="store_true",
-    help="compress images before saving")
-args = vars(ap.parse_args())
-
 def getFrame(time, framerate):
+    '''
+    A function to get the frame number from a given timestamp and framerate
+    inputs:
+        time: the timestamp as a string, in format hh:mm:ss
+        framerate: the framerate as a float
+    outputs:
+        the frame number as an integer
+    '''
     h, m, s = time.split(':')
     seconds = int(h) * 3600 + int(m) * 60 + int(s)
     return round(seconds * framerate)
 
 def compressImage(path):
+    '''
+    A function to compress an image at a given path
+    inputs:
+        path: the path to the directory where the image is saved
+    outputs:
+        none
+    '''
     image = Image.open(path)
     image.save(path, optimize=True, quality=70)
     print('Compressing...{} --> {}'.format(path, os.path.getsize(path)))
 
-# Capture each frame of the video file and save it to a directory
-def FrameCapture(path, directory, file):
+def FrameCapture(path, directory, file_path, compress):
+    '''
+    A function to capture the frames of a given video, and save each one to folders
+    according to the 'category' of the object in the frame, denoted in a given file
+    inputs:
+        path: the path to the video that has to decomposed into frames
+        directory: the path to the directory in which to save the frames
+        file_path: the path to the timestamps file which contains the object classifications
+        compress: boolean value of whether or not to compress the video
+    outputs:
+        none
+    side_effects:
+        saves sets of frames to directory, in separate folders with respect to frame classification,
+        and optionally compresses them
+    '''
     vidObj = cv2.VideoCapture(path)
     vidObj_length = int(vidObj.get(cv2.CAP_PROP_FRAME_COUNT))
     vidObj_framerate = vidObj.get(cv2.CAP_PROP_FPS)
@@ -48,7 +62,7 @@ def FrameCapture(path, directory, file):
     padding = len(str(vidObj_length))
     count = 0
 
-    file = open(args["file"], "r+")
+    file = open(file_path, "r+")
     labels = list()
     header = file.readline()
     for line in file:
@@ -70,15 +84,27 @@ def FrameCapture(path, directory, file):
             name = subdirectory + '/{}.jpg'.format(str(count).rjust(padding,'0'))
             cv2.imwrite(name, image)
             print('Creating...{} -> {}'.format(name,success))
-            if args["compress"]: compressImage(name)
+            if compress: compressImage(name)
         count += 1
 
 if __name__ == '__main__':
+    # Construct the argument parser
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-v", "--video", required=True,
+        help="path to the video file")
+    ap.add_argument("-d", "--directory", required=True,
+        help="path to the directory to store the frames. Will create a new directory \
+        if needed")
+    ap.add_argument("-f", "--file", required=True,
+        help="path to the text file containing timestamps for objects in video")
+    ap.add_argument("-c", "--compress", action="store_true",
+        help="compress images before saving")
+    args = vars(ap.parse_args())
 
     try:
         if (not os.path.exists(args["directory"])):
             os.makedirs(args["directory"])
-        FrameCapture(args["video"], args["directory"], args["file"])
+        FrameCapture(args["video"], args["directory"], args["file"], args["compress"])
     except Exception as e:
         print("ERROR: ", str(e))
     else:
