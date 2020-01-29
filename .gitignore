@@ -1,2 +1,4 @@
 # Don't track the content of these folders
 data/
+image_data/.ipynb_checkpoints/
+image_data/obj/
