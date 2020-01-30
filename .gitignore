@@ -2,3 +2,4 @@
 data/
 image_data/.ipynb_checkpoints/
 image_data/obj/
+image_data/yolo_labels/
