@@ -10,7 +10,7 @@
 
 import cv2
 import os
-import argparse 
+import argparse
 from PIL import Image
 
 def getFrame(time, framerate):
