@@ -1,6 +1,6 @@
 # Don't track the content of these folders
 data/
-image_data/.ipynb_checkpoints/
-image_data/obj/
-image_data/train_valid/
-image_data/yolo_labels/
+object_detection/.ipynb_checkpoints/
+object_detection/obj/
+object_detection/train_valid/
+object_detection/yolo_labels/
