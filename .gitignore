@@ -4,3 +4,8 @@ object_detection/.ipynb_checkpoints/
 object_detection/obj/
 object_detection/train_valid/
 object_detection/yolo_labels/
+preprocessing/creatingData/frames/
+preprocessing/creatingData/videos/
+.vscode/
+aquadroneEnv/
+visionEnv
