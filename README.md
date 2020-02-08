@@ -21,3 +21,9 @@ Model class
 Data Class
 
 ### Outputting data
+translate corners to differentials
+look at individual struct by object for number of points
+translate number of received points
+ideas
+- maybe do some kind of edge detection knowing the object?
+- force number of corners / shape
