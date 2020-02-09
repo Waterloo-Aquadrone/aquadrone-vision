@@ -43,17 +43,17 @@ def get_contours(img):
 
 
     # show the final points on a copy of the image
-    '''
+    
     img2 = img.copy()
     for pt in coor_tuples:
         cv.circle(img2, tuple(reversed(pt)), 3, (0, 0, 255), -1)
     cv.imshow('Image with main corners', img2)
     cv.waitKey(0)
-    '''
+    
 
     return coor_tuples
 
 
-# img = cv.imread("test.jpg")
-# corners = get_contours(img)
-# print(corners)
+img = cv.imread("float-0157.jpg")
+corners = get_contours(img)
+print(corners)
