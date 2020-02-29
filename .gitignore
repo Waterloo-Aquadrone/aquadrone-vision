@@ -13,3 +13,4 @@ preprocessing/preprocessingImages/BestBFParameters/
 preprocessing/preprocessingImages/images/
 .vs/
 machineLearning/Object-Classification-and-Detection/Keras-Sandbox/simple-image-classification-model/pyimagesearch/__pycache__/
+depthSensing/images/
