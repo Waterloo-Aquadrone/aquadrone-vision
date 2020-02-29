@@ -25,3 +25,6 @@ Congrats! You've made your changes to the repo
 
 ### Google Colab
 Google colab can be used to train code without your own gpu.
+
+### Supervisely
+How we label the bounding boxes for our code
