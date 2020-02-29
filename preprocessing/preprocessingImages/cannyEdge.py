@@ -24,4 +24,8 @@ plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
 plt.savefig('plot-' + image_name)
 
 #plt.show()
+<<<<<<< HEAD
 '''
+=======
+'''
+>>>>>>> 3e8374195b8463f3c0d1ac9aa90612d6b8fa6a04
