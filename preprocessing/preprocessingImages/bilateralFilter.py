@@ -32,8 +32,4 @@ upper_thresh = int(min(255, (1 + sigma) * v))
 #get the edge
 edges = cv2.Canny(imgb, lower_thresh, upper_thresh)
 edgesimg2 = PIL.Image.fromarray(edges)
-<<<<<<< HEAD
 edgesimg2.save(image_name + '-' + str(d) + ', ' + str(intensity) + ', ' + str(space) + '.jpg')
-=======
-edgesimg2.save(image_name + '-' + str(d) + ', ' + str(intensity) + ', ' + str(space) + '.jpg')
->>>>>>> 3e8374195b8463f3c0d1ac9aa90612d6b8fa6a04
