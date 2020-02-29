@@ -9,3 +9,5 @@ preprocessing/creatingData/videos/
 .vscode/
 aquadroneEnv/
 visionEnv
+preprocessing/preprocessingImages/BestBFParameters/
+preprocessing/preprocessingImages/images/

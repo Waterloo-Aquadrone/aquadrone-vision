@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import imshow
 
-img = cv2.imread('gate6.png')
+img = cv2.imread('float-0157.jpg')
 
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
