@@ -19,6 +19,7 @@
 ########################################################################
 
 import pyzed.sl as sl
+from pixel_depth import depth_value
 import math
 import numpy as np
 import sys
@@ -57,6 +58,7 @@ def main():
     i = 0
     image_zed = sl.Mat(img_size.width, img_size.height, sl.MAT_TYPE.U8_C4)
     depth_img_zed = sl.Mat(img_size.width, img_size.height, sl.MAT_TYPE.U8_C4)
+    depth_val_zed = sl.Mat(img_size.width, img_size.height, sl.MAT_TYPE.U8_C4)
     point_cloud = sl.Mat()
 
     mirror_ref = sl.Transform()
@@ -69,13 +71,24 @@ def main():
 
             # Retrieve left image and depth image
             zed.retrieve_image(image_zed, sl.VIEW.LEFT, sl.MEM.CPU, img_size)
-            zed.retrieve_image(depth_img_zed, sl.VIEW.DEPTH, sl.MEM.CPU, img_size)
+            zed.retrieve_image(depth_img_zed, sl.VIEW.DEPTH, sl.MEM.CPU, img_size)    
+            # Gives depth value at a certain pixel
+            # Test depth value at center pixel
+            ## Add condition to determine when to use, or just remain the same ##
+            ## Maybe get center value of bounding box(es) as the dimension w.r.t. the center of image ##
+            if True:
+                zed.retrieve_measure(depth_val_zed, sl.MEASURE.DEPTH, sl.MEM.CPU, img_size)
+                depth_val_ocv = depth_val_zed.get_data()
+                # For placeholder, gives value at the center of image
+                depth = depth_value(int(len(depth_val_ocv)/2), int(len(depth_val_zed[0])/2), depth_val_ocv)
+                print(depth)        
             # Retrieve colored point cloud. Point cloud is aligned on the left image.
-            zed.retrieve_measure(point_cloud, sl.MEASURE.XYZRGBA, sl.MEM.CPU)
+            zed.retrieve_measure(point_cloud, sl.MEASURE.XYZRGBA, sl.MEM.CPU)       
 
-            # Retrieve images from matrices
+            # Retrive image Numpy array
             img_ocv = image_zed.get_data()
             depth_img_ocv = depth_img_zed.get_data()
+            # Load depth data into Numpy array      
 
             # Display what the camera sees
             cv2.imshow("Image", img_ocv)
