@@ -16,3 +16,6 @@ preprocessing/preprocessingImages/images/
 machineLearning/Object-Classification-and-Detection/Keras-Sandbox/simple-image-classification-model/pyimagesearch/__pycache__/
 depthSensing/images/
 .DS_Store
+/venv
+*__pycache__
+*.pyc
