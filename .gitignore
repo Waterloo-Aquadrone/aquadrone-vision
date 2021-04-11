@@ -17,3 +17,5 @@ machineLearning/Object-Classification-and-Detection/Keras-Sandbox/simple-image-c
 depthSensing/images/
 .DS_Store
 /venv
+*__pycache__
+*.pyc
