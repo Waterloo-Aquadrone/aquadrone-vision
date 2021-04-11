@@ -13,64 +13,80 @@ def main():
     lower_orange = np.array([0, 0, 50])
     upper_orange = np.array([18, 200, 255])
 
-    # Create mask and resulting image
+    # Create mask
     mask = cv.inRange(hsv_img, lower_orange, upper_orange)
-    res = cv.bitwise_and(img, img, mask=mask)
 
-    #Hough lines code - generating too many lines
-    """"
-    blur = cv.GaussianBlur(mask, (15, 15), 0)
-    edges = cv.Canny(blur, 250, 250)
+    #Create minimum area bounding box for mask
+    contours, hierarchy = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    rect = cv.minAreaRect(contours[-1])
+    box = cv.boxPoints(rect)
+    box = np.int0(box)
 
-    lines = cv.HoughLinesP(edges, 1, np.radians(1), 20, maxLineGap=250)
-    print(len(lines))
+    #Create skeleton of mask
+    mask = cv.GaussianBlur(mask, (17, 17), 0)
+    kernel = np.ones((20, 20), np.uint8)
+    mask = cv.erode(mask, kernel, iterations=2)
+    size = np.size(mask)
+    skel = np.zeros(mask.shape, np.uint8)
+    element = cv.getStructuringElement(cv.MORPH_CROSS, (3, 3))
+    done = False
+
+    while (not done):
+        eroded = cv.erode(mask, element)
+        temp = cv.dilate(eroded, element)
+        temp = cv.subtract(mask, temp)
+        skel = cv.bitwise_or(skel, temp)
+        mask = eroded.copy()
+        zeros = size - cv.countNonZero(mask)
+        if zeros == size:
+            done = True
+
+    #Generate Hough lines from skeleton
+    edges = cv.Canny(skel, 250, 250)
+    lines = cv.HoughLinesP(edges, rho=1, theta=np.radians(1), threshold=100, maxLineGap=500)
+
+    dists = []
     for line in lines:
-        print(line)
         x1, y1, x2, y2 = line[0]
-        cv.line(img, (x1, y1), (x2, y2), (0, 255, 0), 5)
-    """
-    #Determining coordines of non zero pixels
-    pixelCoords = cv.findNonZero(mask)
-    print("Pixel Coordinates: " + str(pixelCoords))
+        a = np.array((x1, y1))
+        b = np.array((x2, y2))
+        dist = np.linalg.norm(a-b)
+        dists.append(dist)
 
-    #Determine x and y values of coordinates
-    xCoords = []
-    yCoords = []
-    for i in pixelCoords:
-        xCoords.append(i[0][0])
-        yCoords.append(i[0][1])
+    #Determine largest hough line generated
+    largestLine = dists.index(max(dists))
 
-    print("x coordinates: " + str(xCoords))
-    print("y coordinates: " + str(yCoords))
+    #Extend largest hough line and find intersection with minimum area bounding box
+    m1 = (lines[largestLine][0][1] - lines[largestLine][0][3])/(lines[largestLine][0][0] - lines[largestLine][0][2])
+    m2 = (box[0][1] - box[3][1])/(box[0][0] - box[3][0])
+    m3 = (box[1][1] - box[2][1])/(box[1][0] - box[2][0])
+    b1 = lines[largestLine][0][1] - (m1*lines[largestLine][0][0])
+    b2 = box[0][1] - (m2*box[0][0])
+    b3 = box[1][1] - (m3*box[1][0])
 
-    #Find line of bestfit
-    slope, yInt = np.polyfit(xCoords, yCoords, 1)
-    print("Slope: " + str(slope) + "\nY int: " + str(yInt))
+    x1 = (b2-b1)/(m1-m2)
+    x2 = (b3-b1)/(m1-m3)
+    y1 = (m1*x1) + b1
+    y2 = (m1*x2) + b1
 
-    #determine height and width of image
-    height, width = mask.shape
+    #Check if any point is going out of frame
+    if x1 < 0:
+        x1 = 0
+    if x2 < 0:
+        x2 = 0
+    if y1 < 0:
+        y1 = 0
+    if y2 < 0:
+        y2 = 0
 
-    #Generate endpoints for line of bestfit based on edges of image
-    linePoints = []
+    #Print coordinates of line
+    print(x1, y1, x2, y2)
 
-    if ((height - yInt)/slope >= 0 and (height - yInt)/slope <= width ):
-        linePoints.append((int((height - yInt)/slope), 0))
-    if ((-yInt)/slope >= 0 and (-yInt)/slope <= width):
-        linePoints.append((int((-yInt)/slope), height))
-    if ((slope * width + yInt) >= 0 and (slope * width + yInt) <= height):
-        linePoints.append((width, height-int((slope * width + yInt))))
-    if (yInt >= 0 and yInt <= height):
-        linePoints.append((0, height-int(yInt)))
+    #Draw line
+    cv.line(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 3)
 
-    print("Line of bestfit endpoints: " + str(linePoints))
-
-    #Draw line of bestfit
-    cv.line(img, linePoints[0], linePoints[1], (255, 0, 0), thickness=5)
-
-    cv.imshow("Mask", mask)
-    #cv.imshow("Edges", edges)
+    #Show resulting image with line detected
     cv.imshow("Image", img)
-    #cv.imshow("Blur", blur)
 
     cv.waitKey(0)
     cv.destroyAllWindows()
